@@ -16,7 +16,30 @@ window.addEventListener('load',function(){
     classes so it needs to be declaired first.
     */
     class InputHandler{
-
+        constructor(game){
+            this.game = game;
+            //We use the pointer function so that it will never forget that we use handler inside constuctor 
+            window.addEventListener('keydown', e => {
+                if(((e.key === 'ArrowUp') ||
+                    (e.key === 'ArrowDown') ||
+                    (e.key === 'ArrowLeft') ||
+                    (e.key === 'ArrowRight'))
+                && this.game.keys.indexOf(e.key) === -1){
+                    //if they upkey is pressed and the upkey if not already in the array then it will push
+                    this.game.keys.push(e.key);
+                }
+                console.log(this.game.keys)
+            })
+            window.addEventListener('keyup', e =>{
+            //indexOf() method returns the first index at which a given element can be found in the array,
+            //or it will return -1 if the element is not present.
+                if(this.game.keys.indexOf(e.key) > -1){
+                    //if there is an instance of the key we will use the splice methods to remove it
+                    this.game.keys.splice(this.game.keys.indexOf(e.key),1)
+                }
+                console.log(this.game.keys)
+            })
+        }
     }
 
     /*This will handle player lasers*/ 
@@ -39,7 +62,7 @@ window.addEventListener('load',function(){
             this.height = 190;
             this.x=20;
             this.y=100;
-            this.speedY=0;
+            this.speedY= 0;
         }
 
         //update() methods is to move the player around
@@ -79,6 +102,8 @@ window.addEventListener('load',function(){
             this.width = width;
             this.height = height;
             this.player = new Player(this);
+            this.input = new InputHandler(this);
+            this.keys=[];
         }
         update(){
             this.player.update();
@@ -93,9 +118,12 @@ window.addEventListener('load',function(){
     
     //animation loop
     /* requestAnimationFrame() method: tells the browser that we wish to perform an animation and it request that the browser
-    calls a specified function to update an animation before the next repaint. So it takes in the method you want animate before the next
+    calls a specified function to update an animation before the next repaint. So it takes in the method yo su want animate before the next
     repaint. We are passing the animet which is the name of the paren to create an endless animation loop*/
     function animate(){
+        // This makes it so that the object travels down the page without leaving a trail of its old positions
+        //So its deleting the previous rectangle.
+        ctx.clearRect(0,0, canvas.width, canvas.height);
         game.update();
         game.draw(ctx);
         requestAnimationFrame(animate);
