@@ -28,7 +28,10 @@ window.addEventListener('load',function(){
                     //if they upkey is pressed and the upkey if not already in the array then it will push
                     this.game.keys.push(e.key);
                 }
-                console.log(this.game.keys)
+                else if (e.key === ' '){
+                    this.game.player.shootTop();
+                }
+
             })
             window.addEventListener('keyup', e =>{
             //indexOf() method returns the first index at which a given element can be found in the array,
@@ -37,14 +40,31 @@ window.addEventListener('load',function(){
                     //if there is an instance of the key we will use the splice methods to remove it
                     this.game.keys.splice(this.game.keys.indexOf(e.key),1)
                 }
-                console.log(this.game.keys)
+
             })
         }
     }
 
     /*This will handle player lasers*/ 
     class Projectile{
-
+        constructor(game, x , y){
+            this.game = game;
+            this.x = x;
+            this.y = y;
+            this.width =3;
+            this.height =3;
+            this.speed = 3;
+            this.markForDeletion = false;
+        }
+        update(){
+            this.x += this.speed;
+            //We are ensuring that the enemy is not destoyed outside the frame so we are macking the range 80% of the sceen.
+            if(this.x > this.game.width*0.8) this.markedForDeletion = true;
+        }
+        draw(context){
+            context.fillStyle = 'yellow';
+            context.fillRect(this.x, this.y, this.width, this.height);
+        }
     }
     /*deal with falling screws and bolts that some from damaged enemy */ 
     class Particle{
@@ -63,22 +83,60 @@ window.addEventListener('load',function(){
             this.x=20;
             this.y=100;
             this.speedY= 0;
+            this.maxSpeed =3;
+            this.projectiles =[];
         }
 
         //update() methods is to move the player around
         update(){
+            if(this.game.keys.includes('ArrowUp')) this.speedY = -this.maxSpeed;
+            else if (this.game.keys.includes('ArrowDown')) this.speedY = this.maxSpeed;
+            else this.speedY = 0;
             this.y += this.speedY;
+            //handle projectiles
+            this.projectiles.forEach(projectile => {
+                projectile.update();
+            })
+            //We want all elements marked for deletion equal to false, .filter creates a new array 
+            this.projectiles = this.projectiles.filter(projectiles => !this.projectiles.markForDeletion)
         }
-
+ 
         //draw method to draw graphics representing the player.
         //First we are using the .fillRect to respent the player
         draw(context){
+            context.fillStyle = 'black';
             context.fillRect(this.x, this.y, this.width, this.height)
+            this.projectiles.forEach(projectile =>{
+                projectile.draw(context);
+            });
+        }
+        shootTop(){
+            if(this.game.ammo > 0 ){
+                this.projectiles.push(new Projectile(this.game, this.x + 80, this.y + 30))
+                this.game.ammo--;
+            }
         }
     }
 
     /*Enermy class will be the main blueprint handling many different enemy types*/ 
     class Enemy{
+        constructor(game){
+            this.game = game;
+            this.x = this.game.width;
+            this.speedX = Math.random()* - 1.5 - 0.5;
+            this.markedForDeletion = false;
+        }
+        update(){
+            this.x += this.speedX;
+            if(this.x + this.width < 0) this.markedForDeletion = true;
+        }
+        draw(context){
+            context.fillStyle = 'red';
+            context.fillRect(this.x, this.y, this.width, this.height)
+        }
+    }
+    //Angler1 is a subclass of the Enemy class
+    class Angler1 extends Enemy{
 
     }
 
@@ -93,7 +151,19 @@ window.addEventListener('load',function(){
 
     /* UI class will draw score, timer and other information tha needs be displayed for the user*/
     class UI{
-
+        constructor(game){
+            this.game = game;
+            this.fontSize =25;
+            this.fontFamily = 'Helvetica';
+            this.color = 'white';
+        }
+        draw(context){
+            //this will draw a small bar with the amount of amo we currently have left
+            context.fillstyle
+            for (let i = 0; i < this.game.ammo; i++){
+                context.fillRect(20 + 5 * i, 50, 3, 20)
+            }
+        }
     }
 
     /* Game class will bring all logic together */
@@ -103,30 +173,52 @@ window.addEventListener('load',function(){
             this.height = height;
             this.player = new Player(this);
             this.input = new InputHandler(this);
+            this.ui = new UI(this);
             this.keys=[];
+            this.ammo = 20;
+            this.maxAmmo = 50;
+            this.ammoTimer =0;
+            this.ammoInterval = 500;
         }
-        update(){
+        update(deltaTime){
             this.player.update();
+            if (this.ammoTimer > this.ammoInterval){
+                if(this.ammo < this.maxAmmo) 
+                this.ammo++;
+                this.ammoTimer = 0;
+            }
+            else{
+                this.ammoTimer += deltaTime;
+            }
         }
         draw(context){
             this.player.draw(context);
+            this.ui.draw(context)
         }
     }
 
     //Instantiating a new instance of Game 
     const game = new Game(canvas.width, canvas.height);
     
+    //We are working with the delta time to so that periodic events will run around the same time in an old or new machine.
+    let lastTime = 0;
+
     //animation loop
     /* requestAnimationFrame() method: tells the browser that we wish to perform an animation and it request that the browser
     calls a specified function to update an animation before the next repaint. So it takes in the method yo su want animate before the next
     repaint. We are passing the animet which is the name of the paren to create an endless animation loop*/
-    function animate(){
+    function animate(timeStamp){
+        const deltaTime = timeStamp - lastTime;
+        lastTime = timeStamp;
+
         // This makes it so that the object travels down the page without leaving a trail of its old positions
         //So its deleting the previous rectangle.
         ctx.clearRect(0,0, canvas.width, canvas.height);
-        game.update();
+        game.update(deltaTime);
         game.draw(ctx);
+
+        //this method automatically passed a time stamp as an arguent the function it calls
         requestAnimationFrame(animate);
     }
-    animate();
+    animate(0);
 } )
