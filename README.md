@@ -22,3 +22,6 @@ https://mugenarchive.com/forums/downloads.php?do=file&id=172577-sor4-adam-cherry
 
 moving sprite animations 
 https://www.youtube.com/watch?v=VyvOHxkKT0A
+
+Sprite animation
+https://www.youtube.com/watch?v=CY0HE277IBM

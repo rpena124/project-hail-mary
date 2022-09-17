@@ -81,13 +81,15 @@ window.addEventListener('load',function(){
     class Player{
         constructor(game){
             this.game =game;
-            this.width = 225;
-            this.height = 404;
+            this.width = 170;
+            this.height = 370 ;
             this.x=20;
             this.y=100;
-            this.frameX =0 ;
+            this.frameX = 0 ;
             this.frameY = 0;
-            this.maFrame = 7;
+            this.staggerFrame = 10;
+            this.gameFrame = 0;
+            this.maxFrame = 9;
             this.speedY= 0;
             this.maxSpeed =3;
             this.projectiles =[];
@@ -108,12 +110,16 @@ window.addEventListener('load',function(){
             this.projectiles = this.projectiles.filter(projectiles => !this.projectiles.markedForDeletion)
             
             //Sprite animation
-            if(this.frameX < this.maFrame){
-                this.frameX++;
-            }  
-            else{
-                this.frameX = 0;
+            if(this.gameFrame % this.staggerFrame == 0){
+                if(this.frameX < this.maxFrame){
+                    this.frameX++;
+                }  
+                else{
+                    this.frameX = 0;
+                }
             }
+            this.gameFrame++;
+
         }
  
         //draw method to draw graphics representing the player.
@@ -123,11 +129,11 @@ window.addEventListener('load',function(){
             if(game.debug) context.strokeRect(this.x, this.y, this.width, this.height);
            
             //How to draw our player using our sprite sheet
-            // context.drawImage(this.image,this.frameX*this.width,this.frameY*this.height, this.width, this.height,
-            // this.x, this.y, this.width,this.height);
+            context.drawImage(this.image,this.frameX*this.width,this.frameY*this.height, this.width, this.height,
+            this.x, this.y, this.width,this.height);
 
             this.projectiles.forEach(projectile =>{
-                projectile.draw(context);
+                projectile.draw(context);   
             });
         }
         shootTop(){
@@ -375,6 +381,10 @@ window.addEventListener('load',function(){
     //lastTime variable will store the value of ths time stamp of the previous animation loop.
     let lastTime = 0;
 
+    // // =================Test
+    // let gameFrame = 0;
+    // const staggerFrames = 5;
+
     //animation loop
     /* requestAnimationFrame() method: tells the browser that we wish to perform an animation and it request that the browser
     calls a specified function to update an animation before the next repaint. So it takes in the method yo su want animate before the next
@@ -388,7 +398,15 @@ window.addEventListener('load',function(){
         ctx.clearRect(0,0, canvas.width, canvas.height);
         game.update(deltaTime);
         game.draw(ctx);
+        
 
+        // // =========================Test
+        // if(gameFrame % staggerFrames ==0){
+        //     if(game.player.frameX < 6) frameX++;
+        //     else  game.player.frameX= 0;
+        // }
+        // gameFrame++;
+        // // ===========================Test
         //this method automatically passed a time stamp as an arguent the function it calls
         requestAnimationFrame(animate);
     }
