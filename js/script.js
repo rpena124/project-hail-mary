@@ -54,7 +54,7 @@ window.addEventListener('load',function(){
             this.width =3;
             this.height =3;
             this.speed = 3;
-            this.markForDeletion = false;
+            this.markedForDeletion = false;
         }
         update(){
             this.x += this.speed;
@@ -98,7 +98,7 @@ window.addEventListener('load',function(){
                 projectile.update();
             })
             //We want all elements marked for deletion equal to false, .filter creates a new array 
-            this.projectiles = this.projectiles.filter(projectiles => !this.projectiles.markForDeletion)
+            this.projectiles = this.projectiles.filter(projectiles => !this.projectiles.markedForDeletion)
         }
  
         //draw method to draw graphics representing the player.
@@ -125,6 +125,8 @@ window.addEventListener('load',function(){
             this.x = this.game.width;
             this.speedX = Math.random()* - 1.5 - 0.5;
             this.markedForDeletion = false;
+            this.lives = 5;
+            this.score = this.lives;
         }
         update(){
             this.x += this.speedX;
@@ -132,7 +134,10 @@ window.addEventListener('load',function(){
         }
         draw(context){
             context.fillStyle = 'red';
-            context.fillRect(this.x, this.y, this.width, this.height)
+            context.fillRect(this.x, this.y, this.width, this.height);
+            context.fillStyle = 'black'
+            context.font = '20px Helvetica'
+            context.fillText(this.lives, this.x, this.y);
         }
     }
     //Angler1 is a subclass of the Enemy class
@@ -164,12 +169,41 @@ window.addEventListener('load',function(){
             this.color = 'white';
         }
         draw(context){
+            //.save method saves the lates canvas state, used with .restore method below.
+            context.save();
+            context.fillStyle = this.color;
+            context.shadowOffSetX = 2;
+            context.shadowOffSetY = 2;
+            context.shadowColor = 'black';
+            context.font = this.fontSize + 'px' + this.fontFamily;
+            //Score
+            context.fillText('Score: '+ this.game.score, 20, 40);
             //this will draw a small bar with the amount of amo we currently have left
-            context.fillstyle
+
             for (let i = 0; i < this.game.ammo; i++){
-                context.fillRect(20 + 5 * i, 50, 3, 20)
+                context.fillRect(20 + 5 * i, 50, 3, 20);
             }
-        }
+            //Game Over message
+            if(this.game.gameOver){
+                context.textAlign = 'center';
+                let message1;
+                let message2;
+                if(this.game.score > this.gameWinningScore){
+                    message1 = 'You Win!';
+                    message2 = 'Well done!';
+                }
+                else{
+                    message1 = 'You Lose!';
+                    message2 = 'Try again next time!';
+                }
+                context.font = '50px' + this.fontFamily;
+                context.fillText(message1, this.game.width* 0.5, this.game.height*0.5-40);
+                context.font = '25px' + this.fontFamily;
+                context.fillText(message2, this.game.width* 0.5, this.game.height*0.5+40);
+            } 
+            //.restore restores the most resently store canvas state, used with .save method above
+            context.restore();
+        } 
     }
 
     /* Game class will bring all logic together */
@@ -186,24 +220,43 @@ window.addEventListener('load',function(){
             this.enemyInterval = 1000;
             this.ammo = 20;
             this.maxAmmo = 50;
-            this.ammoTimer =0;
+            this.ammoTimer = 0;
             this.ammoInterval = 500;
             this.gameOver = false;
+            this.score = 0;
+            this.winningScore =10;
         }
         update(deltaTime){
             this.player.update();
             if (this.ammoTimer > this.ammoInterval){
-                if(this.ammo < this.maxAmmo) 
-                this.ammo++;
+                if(this.ammo < this.maxAmmo) this.ammo++;
                 this.ammoTimer = 0;
             }
             else{
                 this.ammoTimer += deltaTime;
             }
+           
+            //will cycle through the enemy array and call the update method which will mark them for deletion
             this.enemies.forEach(enemy =>{
                 enemy.update();
+
+                //this comparison statment calles the collision function and if they are colliding markes them for deletion
+                if(this.checkCollision(this.player, enemy)){
+                    enemy.markedForDeletion= true;
+                }
+                this.player.projectiles.forEach(projectile =>{
+                    if(this.checkCollision(projectile,enemy))
+                    enemy.lives--;
+                    projectile.markedForDeletion = true;
+                    if(enemy.lives <=0){
+                        enemy.markedForDeletion = true;
+                        this.score += enemy.score;
+                        if(this.score > this.winningScore) this.gameOver = true;
+                    }
+                })
             });
-            this.enemies = this.enemies.filter(enemy => !enemy.markForDeletion);
+            // Will filter out all enemy objects that have markedforDeletion to true
+            this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
 
             //this is creating enemys if enemy timer is greater than the interval else stop and reset the timer.
             if (this.enemyTimer > this.enemyInterval && !this.gameOver){
@@ -225,12 +278,22 @@ window.addEventListener('load',function(){
         addEnemy(){
             this.enemies.push(new Angler1(this));
         }
+        checkCollision(rect1,rect2){
+            return(
+                rect1.x < rect2.x + rect2.width &&
+                rect1.x + rect1.width > rect2.x &&
+                rect1.y < rect2.y + rect2.height &&
+                rect1.height + rect1.y > rect2.y
+            )
+        }
+        
     }
 
     //Instantiating a new instance of Game 
     const game = new Game(canvas.width, canvas.height);
     
     //We are working with the delta time to so that periodic events will run around the same time in an old or new machine.
+    //lastTime variable will store the value of ths time stamp of the previous animation loop.
     let lastTime = 0;
 
     //animation loop
