@@ -6,7 +6,7 @@ window.addEventListener('load',function(){
     //Drawing context, a built in object that contians all the methods and properties that allow us to draw and animate colors shapes and other HTML graphics.
     const ctx = canvas.getContext('2d');
     //setup the canvas dimensions
-    canvas.width = 500;
+    canvas.width = 1500;
     canvas.height = 500;
 
     //<==========Classes===========>
@@ -82,7 +82,7 @@ window.addEventListener('load',function(){
         constructor(game){
             this.game =game;
             this.width = 170;
-            this.height = 370 ;
+            this.height = 409 ;
             this.x=20;
             this.y=100;
             this.frameX = 0 ;
@@ -91,17 +91,32 @@ window.addEventListener('load',function(){
             this.gameFrame = 0;
             this.maxFrame = 9;
             this.speedY= 0;
-            this.maxSpeed =3;
+            this.speedX=0;
+            this.maxSpeed = 3;
             this.projectiles =[];
             this.image = document.getElementById('player');
+            // this.standingAnimation = loadAnimation(
+            //     '../images/standing_images/cherry_0000.png','../images/standing_images/cherry_0003.png',
+            //     '../images/standing_images/cherry_0006.png', '../images/standing_images/cherry_0009.png',
+            //     '../images/standing_images/cherry_0012.png', '../images/standing_images/cherry_0015.png',
+            //     '../images/standing_images/cherry_0018.png')
         }
 
         //update() methods is to move the player around
         update(){
+            //This is how the to move on x axis
+            if(this.game.keys.includes('ArrowRight')) this.speedX = this.maxSpeed;
+            else if (this.game.keys.includes('ArrowLeft')) this.speedX = -this.maxSpeed;
+            else this.speedX = 0;
+            this.x += this.speedX;
+
+            //this is how the character moves on the Y axis
             if(this.game.keys.includes('ArrowUp')) this.speedY = -this.maxSpeed;
             else if (this.game.keys.includes('ArrowDown')) this.speedY = this.maxSpeed;
             else this.speedY = 0;
             this.y += this.speedY;
+
+
             //handle projectiles
             this.projectiles.forEach(projectile => {
                 projectile.update();
@@ -142,6 +157,7 @@ window.addEventListener('load',function(){
                 this.game.ammo--;
             }
         }
+
     }
 
     /*Enermy class will be the main blueprint handling many different enemy types*/ 
@@ -212,10 +228,10 @@ window.addEventListener('load',function(){
             this.image2 = document.getElementById('layer2');
             this.image3 = document.getElementById('layer3');
             this.image4 = document.getElementById('layer4');
-            this.layer1 = new Layer(this.game, this.image1, 0.2);
-            this.layer2 = new Layer(this.game, this.image2, 0.4);
+            this.layer1 = new Layer(this.game, this.image1, 1.3);
+            this.layer2 = new Layer(this.game, this.image2, 1);
             this.layer3 = new Layer(this.game, this.image3, 1);
-            this.layer4 = new Layer(this.game, this.image4, 1.5);
+            this.layer4 = new Layer(this.game, this.image4, .5);
             this.layers = [this.layer1, this.layer2, this.layer3];
         }
         update(){
@@ -297,7 +313,7 @@ window.addEventListener('load',function(){
             this.score = 0;
             this.winningScore =10;
             this.gameTime = 0;
-            this.timeLimit = 5000;
+            this.timeLimit = 20000;
             this.speed = 1;
             this.debug = true;
         }
