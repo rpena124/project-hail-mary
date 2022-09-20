@@ -69,10 +69,6 @@ window.addEventListener('load', function () {
             context.fillRect(this.x, this.y, this.width, this.height);
         }
     }
-    /*deal with falling screws and bolts that some from damaged enemy */
-    class Particle {
-
-    }
 
     /*Player class will control the main character, it will control player sprite sheet.
         its good practise to make the sprite the same height and width that they will be displayed
@@ -95,11 +91,6 @@ window.addEventListener('load', function () {
             this.maxSpeed = 3;
             this.projectiles = [];
             this.image = document.getElementById('player');
-            // this.standingAnimation = loadAnimation(
-            //     '../images/standing_images/cherry_0000.png','../images/standing_images/cherry_0003.png',
-            //     '../images/standing_images/cherry_0006.png', '../images/standing_images/cherry_0009.png',
-            //     '../images/standing_images/cherry_0012.png', '../images/standing_images/cherry_0015.png',
-            //     '../images/standing_images/cherry_0018.png')
         }
 
         //update() methods is to move the player around
@@ -149,17 +140,6 @@ window.addEventListener('load', function () {
             //We want all elements marked for deletion equal to false, .filter creates a new array 
             this.projectiles = this.projectiles.filter(projectiles => !this.projectiles.markedForDeletion)
 
-            // //Sprite animation
-            // if(this.gameFrame % this.staggerFrame == 0){
-            //     if(this.frameX < this.maxFrame){
-            //         this.frameX++;
-            //     }  
-            //     else{
-            //         this.frameX = 0;
-            //     }
-            // }
-            // this.gameFrame++;
-
         }
 
         //draw method to draw graphics representing the player.
@@ -178,9 +158,10 @@ window.addEventListener('load', function () {
         }
         shootTop() {
             if (this.game.ammo > 0) {
-                this.projectiles.push(new Projectile(this.game, this.x + 80, this.y + 30))
+                this.projectiles.push(new Projectile(this.game, this.x + 80, this.y + 50))
                 this.game.ammo--;
             }
+            
         }
 
     }
@@ -304,7 +285,7 @@ window.addEventListener('load', function () {
                     message1 = 'You Win!';
                     message2 = 'Well done!';
                 }
-                else if (game.checkCollision(game.player,game.enemy)) {
+                else {
                     message1 = 'You Lose!';
                     message2 = 'Try again next time!';
                 }
@@ -337,7 +318,7 @@ window.addEventListener('load', function () {
             this.ammoInterval = 500;
             this.gameOver = false;
             this.score = 0;
-            this.winningScore = 10;
+            this.winningScore = 100;
             this.gameTime = 0;
             this.timeLimit = 200000;
             this.speed = 1;

@@ -4,7 +4,7 @@ Motivation:
 I chose to try and recreate Streets of Rage because, like many games and the Science Fiction genre, it's a commentary on the environment that we are presently living in. I wanted to pull more inspiration from books like "The Memory Police" by Yoko Ogawa, "The Handmaid's Tale" by Margaret Atwood. All of these deal with governments taking the rights of their people or sub-group of individuals. 
 
 Instruction:
-use arrove left and right key to move the player. Use space bar to fire. You win the game once you have accumulated 15 points within the time limit. 
+use arrove left and right key to move the player. Use space bar to fire. You win the game once you have accumulated 100 points within the time limit. 
 
 Build Status:
 There are some items needed for future builds, such as using collision detection if an enemy collides with player, the the player helath should decrease. Getting the sprites to function. Fix the projectile so that once it hits one enemy it is marked for deletion and does not continue to hit other enemies. 
