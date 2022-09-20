@@ -10,6 +10,7 @@ Build Status:
 There are some items needed for future builds, such as using collision detection if an enemy collides with player, the the player helath should decrease. Getting the sprites to function. Fix the projectile so that once it hits one enemy it is marked for deletion and does not continue to hit other enemies. 
 
 Technologies used:
+-Vision Studio Code
 -HTML
 -CSS
 -Vanilla Java Script
