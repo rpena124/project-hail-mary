@@ -3,9 +3,11 @@ Proejct Title: Project Hail Mary
 Motivation: 
 I chose to try and recreate Streets of Rage because, like many games and the Science Fiction genre, it's a commentary on the environment that we are presently living in. I wanted to pull more inspiration from books like "The Memory Police" by Yoko Ogawa, "The Handmaid's Tale" by Margaret Atwood. All of these deal with governments taking the rights of their people or sub-group of individuals. 
 
-These themes are pertinent with the US Supreme Court overturning Roe v. Wade, taking away women's right to choose and taking away women's agency over their one bodies and reproductive health. 
+Instruction:
+use arrove left and right key to move the player. Use space bar to fire. You win the game once you have accumulated 15 points within the time limit. 
 
 Build Status:
+There are some items needed for future builds, such as using collision detection if an enemy collides with player, the the player helath should decrease. Getting the sprites to function. Fix the projectile so that once it hits one enemy it is marked for deletion and does not continue to hit other enemies. 
 
 Technologies used:
 -HTML
@@ -25,3 +27,5 @@ https://www.youtube.com/watch?v=VyvOHxkKT0A
 
 Sprite animation
 https://www.youtube.com/watch?v=CY0HE277IBM
+
+https://www.spriters-resource.com/pc_computer/streetsofrage4/
