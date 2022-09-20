@@ -235,10 +235,10 @@ window.addEventListener('load', function () {
             this.image2 = document.getElementById('layer2');
             this.image3 = document.getElementById('layer3');
             this.image4 = document.getElementById('layer4');
-            this.layer1 = new Layer(this.game, this.image1, 0);
-            this.layer2 = new Layer(this.game, this.image2, 0);
-            this.layer3 = new Layer(this.game, this.image3, 0);
-            this.layer4 = new Layer(this.game, this.image4, 0);
+            this.layer1 = new Layer(this.game, this.image1, 1.2);
+            this.layer2 = new Layer(this.game, this.image2, .5);
+            this.layer3 = new Layer(this.game, this.image3, 1);
+            this.layer4 = new Layer(this.game, this.image4, .25);
             this.layers = [this.layer1, this.layer2, this.layer3];
         }
         update() {
